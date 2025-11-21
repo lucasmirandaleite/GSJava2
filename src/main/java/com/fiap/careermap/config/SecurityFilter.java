@@ -1,6 +1,7 @@
 package com.fiap.careermap.config;
 
 import com.fiap.careermap.service.TokenService;
+import com.fiap.careermap.service.UsuarioService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,7 +25,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     private TokenService tokenService;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UsuarioService usuarioService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -38,9 +38,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         try {
             if (token != null && tokenService.isTokenValido(token)) {
                 String email = tokenService.getSubject(token);
-
-                // usa UserDetailsService ao invés de UsuarioService → evita ciclo
-                UserDetails usuario = userDetailsService.loadUserByUsername(email);
+                UserDetails usuario = usuarioService.loadUserByUsername(email);
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
