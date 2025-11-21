@@ -28,13 +28,21 @@ public class SecurityConfigurations {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http ) throws Exception {
         return http
-            .csrf( ).disable()
+            .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests()
-                .antMatchers("/api/v1/auth/**").permitAll()
-                .antMatchers("/actuator/**").permitAll()
+
+                // 🔓 LIBERA LOGIN E REGISTRO
+                .antMatchers("/auth/**").permitAll()
+
+                // 🔓 LIBERA TRILHAS
                 .antMatchers("/api/v1/trilhas/**").permitAll()
+
+                // 🔓 LIBERA ACTUATOR (SAÚDE DA APP)
+                .antMatchers("/actuator/**").permitAll()
+
+                // 🔒 TUDO O RESTO precisa de token
                 .anyRequest().authenticated()
             .and()
             .cors()
@@ -61,7 +69,7 @@ public class SecurityConfigurations {
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
