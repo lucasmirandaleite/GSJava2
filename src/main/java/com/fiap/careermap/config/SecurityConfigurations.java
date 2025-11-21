@@ -28,16 +28,9 @@ public class SecurityConfigurations {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                    // 🔓 liberar login e registro
                     .antMatchers("/auth/**").permitAll()
-
-                    // 🔓 liberar trilhas públicas
                     .antMatchers("/api/v1/trilhas/**").permitAll()
-
-                    // 🔓 liberar actuator
                     .antMatchers("/actuator/**").permitAll()
-
-                    // 🔒 resto precisa token
                     .anyRequest().authenticated()
                 .and()
                 .cors()
