@@ -26,33 +26,34 @@ public class SecurityConfigurations {
     private SecurityFilter securityFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http ) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeHttpRequests()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeHttpRequests()
 
-                // 🔓 LIBERA LOGIN E REGISTRO
+                // Auth
                 .antMatchers("/auth/**").permitAll()
 
-                // 🔓 LIBERA TRILHAS
+                // Trilhas liberadas
                 .antMatchers("/api/v1/trilhas/**").permitAll()
 
-                // 🔓 LIBERA ACTUATOR (SAÚDE DA APP)
+                // Actuator health
                 .antMatchers("/actuator/**").permitAll()
 
-                // 🔒 TUDO O RESTO precisa de token
+                // O resto precisa token
                 .anyRequest().authenticated()
-            .and()
-            .cors()
-            .and()
-            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
+                .and()
+                .cors()
+                .and()
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+            throws Exception {
         return configuration.getAuthenticationManager();
     }
 
