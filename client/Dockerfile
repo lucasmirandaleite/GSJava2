@@ -7,6 +7,7 @@ RUN npm install -g pnpm
 
 # Copiar arquivos do projeto
 COPY package.json ./
+COPY patches ./patches
 
 # Instalar dependências
 RUN pnpm install
