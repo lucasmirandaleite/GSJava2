@@ -49,50 +49,48 @@ public class AuthController {
     // ===================== FORM DE REGISTRO =====================
     @GetMapping("/register")
     public ResponseEntity<String> registerForm() {
-        String html = """
-                <!DOCTYPE html>
-                <html lang="pt-BR">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Registrar Usuário</title>
-                    <style>
-                        body { font-family: Arial; background: #f4f4f4; padding: 20px; }
-                        .card {
-                            max-width: 400px;
-                            margin: auto;
-                            background: #fff;
-                            padding: 20px;
-                            border-radius: 10px;
-                            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                        }
-                        input, button {
-                            width: 100%%;
-                            padding: 10px;
-                            margin-top: 10px;
-                            border-radius: 5px;
-                            border: 1px solid #ccc;
-                        }
-                        button {
-                            background: #4CAF50;
-                            color: white;
-                            font-weight: bold;
-                            cursor: pointer;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="card">
-                        <h2>Registrar Usuário</h2>
-                        <form method="POST" action="/auth/register">
-                            <input type="text" name="nome" placeholder="Nome" required>
-                            <input type="email" name="email" placeholder="Email" required>
-                            <input type="password" name="senha" placeholder="Senha" required>
-                            <button type="submit">Registrar</button>
-                        </form>
-                    </div>
-                </body>
-                </html>
-                """;
+        String html = "<!DOCTYPE html>\n" +
+                "<html lang=\"pt-BR\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>Registrar Usuário</title>\n" +
+                "    <style>\n" +
+                "        body { font-family: Arial; background: #f4f4f4; padding: 20px; }\n" +
+                "        .card {\n" +
+                "            max-width: 400px;\n" +
+                "            margin: auto;\n" +
+                "            background: #fff;\n" +
+                "            padding: 20px;\n" +
+                "            border-radius: 10px;\n" +
+                "            box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n" +
+                "        }\n" +
+                "        input, button {\n" +
+                "            width: 100%;\n" +
+                "            padding: 10px;\n" +
+                "            margin-top: 10px;\n" +
+                "            border-radius: 5px;\n" +
+                "            border: 1px solid #ccc;\n" +
+                "        }\n" +
+                "        button {\n" +
+                "            background: #4CAF50;\n" +
+                "            color: white;\n" +
+                "            font-weight: bold;\n" +
+                "            cursor: pointer;\n" +
+                "        }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div class=\"card\">\n" +
+                "        <h2>Registrar Usuário</h2>\n" +
+                "        <form method=\"POST\" action=\"/auth/register\">\n" +
+                "            <input type=\"text\" name=\"nome\" placeholder=\"Nome\" required>\n" +
+                "            <input type=\"email\" name=\"email\" placeholder=\"Email\" required>\n" +
+                "            <input type=\"password\" name=\"senha\" placeholder=\"Senha\" required>\n" +
+                "            <button type=\"submit\">Registrar</button>\n" +
+                "        </form>\n" +
+                "    </div>\n" +
+                "</body>\n" +
+                "</html>";
 
         return ResponseEntity.ok().body(html);
     }
