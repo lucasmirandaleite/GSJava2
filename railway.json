@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "maven"
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "startCommand": "java -jar target/careermap-0.0.1-SNAPSHOT.jar"
+  }
+}
