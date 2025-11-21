@@ -26,25 +26,20 @@ public class SecurityConfigurations {
     private SecurityFilter securityFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeRequests()
-                    // Endpoints públicos
-                    .antMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                    .antMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
-                    .antMatchers(HttpMethod.POST, "/api/v1/usuarios/recuperar-senha").permitAll()
-                    .antMatchers("/h2-console/**").permitAll() // Para acesso ao H2 Console em desenvolvimento
-
-                    // Endpoints que exigem autenticação
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity ) throws Exception {
+    return httpSecurity
+            .csrf(csrf -> csrf.disable( ))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authorize -> authorize
+                    .antMatchers("/api/v1/auth/**").permitAll()  // Permite rotas de autenticação
+                    .antMatchers("/actuator/**").permitAll()      // Permite health check
+                    .antMatchers("/api/v1/trilhas/**").permitAll() // Permite trilhas públicas
                     .anyRequest().authenticated()
-                .and()
-                .headers().frameOptions().sameOrigin() // Necessário para H2 Console
-                .and()
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+            )
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+}
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
