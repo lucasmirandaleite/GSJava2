@@ -1,9 +1,9 @@
 {
+  "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "maven"
+    "builder": "dockerfile"
   },
   "deploy": {
-    "numReplicas": 1,
     "startCommand": "java -jar target/careermap-0.0.1-SNAPSHOT.jar"
   }
 }
