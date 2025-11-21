@@ -3,7 +3,6 @@ package com.fiap.careermap.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,20 +25,23 @@ public class SecurityConfigurations {
     private SecurityFilter securityFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity ) throws Exception {
-    return httpSecurity
-            .csrf(csrf -> csrf.disable( ))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authorize -> authorize
-                    .antMatchers("/api/v1/auth/**").permitAll()  // Permite rotas de autenticação
-                    .antMatchers("/actuator/**").permitAll()      // Permite health check
-                    .antMatchers("/api/v1/trilhas/**").permitAll() // Permite trilhas públicas
-                    .anyRequest().authenticated()
-            )
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
-}
+    public SecurityFilterChain securityFilterChain(HttpSecurity http ) throws Exception {
+        http
+            .csrf( ).disable()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authorizeHttpRequests()
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/api/v1/trilhas/**").permitAll()
+                .anyRequest().authenticated()
+            .and()
+            .cors()
+            .and()
+            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+        
+        return http.build( );
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -52,17 +54,16 @@ public class SecurityConfigurations {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOriginPatterns(Arrays.asList("*")); // Permite todos os domínios
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    configuration.setAllowedHeaders(Arrays.asList("*"));
-    configuration.setAllowCredentials(true);
-    configuration.setMaxAge(3600L);
-    
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
-    return source;
-}
-
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
