@@ -97,7 +97,7 @@ public class AuthController {
 
     // ===================== POST REGISTRO VIA FORM =====================
     @PostMapping("/register")
-    public ResponseEntity<Usuario> register(@ModelAttribute UsuarioRegistrationDTO registrationDTO) {
+    public ResponseEntity<Usuario> register(@Valid @ModelAttribute UsuarioRegistrationDTO registrationDTO) {
         Usuario novoUsuario = usuarioService.registrarNovoUsuario(registrationDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
