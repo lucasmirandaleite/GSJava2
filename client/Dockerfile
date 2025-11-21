@@ -1,18 +1,24 @@
-# Build stage
-FROM node:22-alpine AS builder
+FROM node:22-alpine
+
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install
+
+# Instalar pnpm
+RUN npm install -g pnpm
+
+# Copiar arquivos do projeto
+COPY package.json ./
+
+# Instalar dependências
+RUN pnpm install
+
+# Copiar código-fonte
 COPY . .
+
+# Build da aplicação
 RUN pnpm build
 
-# Runtime stage
-FROM node:22-alpine
-WORKDIR /app
-RUN npm install -g pnpm
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/pnpm-lock.yaml ./
-RUN pnpm install --prod
+# Expor porta
 EXPOSE 3000
+
+# Comando para iniciar a aplicação
 CMD ["pnpm", "preview"]
