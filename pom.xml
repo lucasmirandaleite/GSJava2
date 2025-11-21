@@ -56,13 +56,13 @@
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- Para produção, o Oracle seria usado, mas para desenvolvimento, H2 é mais prático. -->
-		<!-- <dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
-			<artifactId>ojdbc8</artifactId>
-			<scope>runtime</scope>
-		</dependency> -->
 
+		<!-- MySQL Connector -->
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+</dependency>
 			<!-- JWT -->
 			<dependency>
 				<groupId>io.jsonwebtoken</groupId>
