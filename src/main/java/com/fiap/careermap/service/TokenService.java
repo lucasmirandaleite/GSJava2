@@ -1,16 +1,14 @@
 package com.fiap.careermap.service;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
-import io.jsonwebtoken.MalformedJwtException;
 import com.fiap.careermap.model.Usuario;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.Date;
 
 @Service
 public class TokenService {
@@ -18,28 +16,48 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
     public String gerarToken(Usuario usuario) {
         return Jwts.builder()
                 .setIssuer("careermap-api")
                 .setSubject(usuario.getEmail())
-                .setExpiration(dataExpiracao())
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(Instant.now().plusSeconds(2 * 60 * 60))) // 2h
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String getSubject(String tokenJWT) {
+    // 📌 NOVO: verifica validade sem quebrar a API
+    public boolean isTokenValido(String token) {
         try {
-            return Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(tokenJWT)
-                    .getBody()
-                    .getSubject();
-        } catch (MalformedJwtException e) {
-            throw new RuntimeException("Token JWT inválido ou expirado!");
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false; // token inválido, expirado, malformado, etc
         }
     }
 
-    private java.util.Date dataExpiracao() {
-        return java.util.Date.from(LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00")));
+    public String getSubject(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException("Token expirado!");
+        } catch (MalformedJwtException e) {
+            throw new RuntimeException("Token inválido!");
+        } catch (SignatureException e) {
+            throw new RuntimeException("Assinatura inválida do token!");
+        }
     }
 }
