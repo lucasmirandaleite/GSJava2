@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*", allowedHeaders = "*")  // Habilita requisições de qualquer origem
 public class AuthController {
 
     @Autowired
@@ -46,7 +47,7 @@ public class AuthController {
         return ResponseEntity.ok(new TokenResponseDTO(token, "Bearer"));
     }
 
-    // ===================== FORM DE REGISTRO =====================
+    // ===================== FORM DE REGISTRO (HTML, OPCIONAL) =====================
     @GetMapping("/register")
     public ResponseEntity<String> registerForm() {
         String html = "<!DOCTYPE html>\n" +
@@ -95,9 +96,9 @@ public class AuthController {
         return ResponseEntity.ok().body(html);
     }
 
-    // ===================== POST REGISTRO VIA FORM =====================
+    // ===================== POST REGISTRO VIA JSON (CORRIGIDO) =====================
     @PostMapping("/register")
-    public ResponseEntity<Usuario> register(@Valid @ModelAttribute UsuarioRegistrationDTO registrationDTO) {
+    public ResponseEntity<Usuario> register(@RequestBody @Valid UsuarioRegistrationDTO registrationDTO) {
         Usuario novoUsuario = usuarioService.registrarNovoUsuario(registrationDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
