@@ -39,6 +39,6 @@ public class Trilha {
     @Column(name = "dt_criacao", nullable = false)
     private LocalDateTime dataCriacao = LocalDateTime.now();
 
-    @Column(name = "ds_explicacao_ia", columnDefinition = "CLOB")
+    @Column(name = "ds_explicacao_ia", columnDefinition = "TEXT")
     private String explicacaoIA;
 }
