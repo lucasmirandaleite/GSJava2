@@ -22,17 +22,23 @@ import java.util.Arrays;
 public class SecurityConfigurations {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   SecurityFilter securityFilter) throws Exception {
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityFilter securityFilter) throws Exception {
         return http
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
+                    // 🔓 libera login + registro
                     .antMatchers("/auth/**").permitAll()
+                    .antMatchers("/register").permitAll()
+
+                    // 🔓 libera trilhas
                     .antMatchers("/api/v1/trilhas/**").permitAll()
+
+                    // 🔓 libera actuator
                     .antMatchers("/actuator/**").permitAll()
+
+                    // 🔒 resto protegido
                     .anyRequest().authenticated()
                 .and()
                 .cors()
@@ -42,8 +48,7 @@ public class SecurityConfigurations {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-            throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
