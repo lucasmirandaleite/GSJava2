@@ -30,14 +30,14 @@ public class UsuarioService implements UserDetailsService {
 
     public Usuario registrarNovoUsuario(UsuarioRegistrationDTO dto) {
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new RuntimeException("Email já cadastrado.");
+            throw new IllegalArgumentException("Email já cadastrado.");
         }
 
         Usuario novoUsuario = new Usuario();
         novoUsuario.setNome(dto.getNome());
         novoUsuario.setEmail(dto.getEmail());
         novoUsuario.setSenha(passwordEncoder.encode(dto.getSenha()));
-        novoUsuario.setRole(Role.USER); // Define o papel padrão
+        novoUsuario.setRole(Role.USER);
 
         return usuarioRepository.save(novoUsuario);
     }
@@ -48,11 +48,12 @@ public class UsuarioService implements UserDetailsService {
 
     public Usuario atualizarUsuario(Long id, UsuarioRegistrationDTO dto) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
 
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
-        if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
+
+        if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
             usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         }
 
