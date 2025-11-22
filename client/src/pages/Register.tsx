@@ -8,22 +8,23 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Link } from "wouter";
 import { Zap } from "lucide-react";
+import { register as registerAPI } from "@/services/api";
 
 export default function Register() {
   const [, navigate] = useLocation();
-  const { register } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
     senha: "",
-    confirmarSenha: "",
+    confirmaSenha: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (formData.senha !== formData.confirmarSenha) {
+    // Validações
+    if (formData.senha !== formData.confirmaSenha) {
       toast.error("As senhas não coincidem");
       return;
     }
@@ -36,55 +37,63 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await register({
+      // Chamada à API
+      const response = await registerAPI({
         nome: formData.nome,
         email: formData.email,
         senha: formData.senha,
       });
-      toast.success("Conta criada com sucesso!");
-      navigate("/dashboard");
+
+      // Mostra sucesso
+      toast.success(response.mensagem || "Conta criada com sucesso!");
+      
+      // Aguarda e redireciona para login
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+      
     } catch (error: any) {
-      toast.error(error.message || "Erro ao criar conta");
+      // Trata erro corretamente
+      const errorMsg = error.response?.data?.message || 
+                       error.response?.data?.mensagem ||
+                       error.message || 
+                       "Erro ao criar conta";
+      toast.error(errorMsg);
+      console.error("Erro register:", error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
+      <div className="w-full max-w-md px-4">
         <div className="text-center mb-8">
-          <Link href="/">
-            <a className="inline-flex items-center gap-2 text-2xl font-bold text-emerald-600 hover:text-emerald-700 mb-2">
-              <Zap className="w-8 h-8" />
-              CareerMap
-            </a>
+          <Link href="/" className="inline-flex items-center gap-2 text-2xl font-bold text-emerald-600 hover:text-emerald-700">
+            <Zap className="w-8 h-8" />
+            CareerMap
           </Link>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Criar Conta</CardTitle>
-            <CardDescription>
-              Preencha os dados abaixo para criar sua conta gratuita
-            </CardDescription>
+        <Card className="border-0 shadow-lg">
+          <CardHeader className="space-y-2">
+            <CardTitle>Cadastro</CardTitle>
+            <CardDescription>Crie sua conta para começar</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="nome">Nome Completo</Label>
+                <Label htmlFor="nome">Nome</Label>
                 <Input
                   id="nome"
                   type="text"
                   placeholder="Seu nome"
                   value={formData.nome}
-                  onChange={(e) =>
-                    setFormData({ ...formData, nome: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                   required
+                  disabled={loading}
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -92,52 +101,47 @@ export default function Register() {
                   type="email"
                   placeholder="seu@email.com"
                   value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
+                  disabled={loading}
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="senha">Senha</Label>
                 <Input
                   id="senha"
                   type="password"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="••••••••"
                   value={formData.senha}
-                  onChange={(e) =>
-                    setFormData({ ...formData, senha: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
                   required
+                  disabled={loading}
                 />
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="confirmarSenha">Confirmar Senha</Label>
+                <Label htmlFor="confirmaSenha">Confirmar Senha</Label>
                 <Input
-                  id="confirmarSenha"
+                  id="confirmaSenha"
                   type="password"
-                  placeholder="Digite a senha novamente"
-                  value={formData.confirmarSenha}
-                  onChange={(e) =>
-                    setFormData({ ...formData, confirmarSenha: e.target.value })
-                  }
+                  placeholder="••••••••"
+                  value={formData.confirmaSenha}
+                  onChange={(e) => setFormData({ ...formData, confirmaSenha: e.target.value })}
                   required
+                  disabled={loading}
                 />
               </div>
-
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Criando conta..." : "Criar Conta"}
+              <Button 
+                type="submit" 
+                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                disabled={loading}
+              >
+                {loading ? "Cadastrando..." : "Cadastro"}
               </Button>
             </form>
-
-            <div className="mt-4 text-center text-sm text-gray-600">
-              Já tem uma conta?{" "}
-              <Link href="/login">
-                <a className="text-emerald-600 hover:underline font-medium">
-                  Entrar
-                </a>
+            <div className="mt-4 text-center text-sm">
+              <span className="text-gray-600">Já tem uma conta? </span>
+              <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+                Faça login
               </Link>
             </div>
           </CardContent>
