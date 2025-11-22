@@ -98,10 +98,20 @@ public class AuthController {
 
     // ===================== POST REGISTRO VIA JSON (CORRIGIDO) =====================
    @PostMapping("/register")
-public ResponseEntity<Usuario> register(@RequestBody @Valid UsuarioRegistrationDTO registrationDTO) {
-    System.out.println("CHAMOU O ENDPOINT DE REGISTRO: " + registrationDTO.getEmail());
-    Usuario novoUsuario = usuarioService.registrarNovoUsuario(registrationDTO);
-    return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
+public String register(@ModelAttribute Usuario usuario, Model model) {
+    try {
+        // Verifica se usuário já existe
+        if (usuarioService.findByEmail(usuario.getEmail()) != null) {
+            model.addAttribute("error", "Email já cadastrado");
+            return "auth/register";
+        }
+        
+        usuarioService.save(usuario);
+        return "redirect:/auth/login?success=true";
+    } catch (Exception e) {
+        model.addAttribute("error", "Erro ao cadastrar usuário: " + e.getMessage());
+        return "auth/register";
+    }
 }
 
 }
