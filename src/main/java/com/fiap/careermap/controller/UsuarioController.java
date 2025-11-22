@@ -1,5 +1,6 @@
 package com.fiap.careermap.controller;
 
+import com.fiap.careermap.dto.UsuarioDTO;
 import com.fiap.careermap.dto.UsuarioRegistrationDTO;
 import com.fiap.careermap.model.Usuario;
 import com.fiap.careermap.service.UsuarioService;
@@ -16,23 +17,34 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping("/me")
-    public ResponseEntity<Usuario> getPerfil(@AuthenticationPrincipal Usuario usuario) {
-        // O objeto Usuario é injetado diretamente do contexto de segurança
-        return ResponseEntity.ok(usuario);
+    // Buscar perfil autenticado (exibe só dados essenciais, use DTO por segurança)
+    @GetMapping("/perfil")
+    public ResponseEntity<UsuarioDTO> getPerfil(@AuthenticationPrincipal Usuario usuario) {
+        // Aqui converte o objeto da entidade para o DTO, que só devolve dados necessários
+        UsuarioDTO dto = new UsuarioDTO(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getRole());
+        return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/me")
-    public ResponseEntity<Usuario> atualizarPerfil(@AuthenticationPrincipal Usuario usuario, @RequestBody @Valid UsuarioRegistrationDTO dto) {
-        // O DTO de registro é reutilizado para atualização, mas a senha é opcional
+    // Atualizar perfil autenticado (senha OPCIONAL)
+    @PutMapping("/perfil")
+    public ResponseEntity<UsuarioDTO> atualizarPerfil(
+            @AuthenticationPrincipal Usuario usuario,
+            @RequestBody @Valid UsuarioRegistrationDTO dto) {
+
         Usuario usuarioAtualizado = usuarioService.atualizarUsuario(usuario.getId(), dto);
-        return ResponseEntity.ok(usuarioAtualizado);
+        UsuarioDTO retorno = new UsuarioDTO(
+            usuarioAtualizado.getId(),
+            usuarioAtualizado.getNome(),
+            usuarioAtualizado.getEmail(),
+            usuarioAtualizado.getRole()
+        );
+        return ResponseEntity.ok(retorno);
     }
 
-    // Placeholder para Recuperação de Senha (requer infraestrutura de e-mail)
+    // Recuperar senha (envio de e-mail - só um placeholder)
     @PostMapping("/recuperar-senha")
     public ResponseEntity<String> recuperarSenha(@RequestBody String email) {
-        // Lógica de envio de e-mail para recuperação de senha
+        // Aqui você implementaria lógica para envio de e-mail
         return ResponseEntity.ok("Se o email estiver cadastrado, um link de recuperação de senha será enviado.");
     }
 }
