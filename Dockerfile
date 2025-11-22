@@ -1,9 +1,9 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:11-jre-alpine
 
 WORKDIR /app
 
-# Copiar apenas o JAR
-COPY target/*.jar app.jar
+# Copiar o JAR
+COPY target/careermap-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 
