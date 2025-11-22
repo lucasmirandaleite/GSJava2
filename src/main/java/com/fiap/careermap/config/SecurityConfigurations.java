@@ -29,6 +29,7 @@ public class SecurityConfigurations {
                 .and()
                 .authorizeHttpRequests()
                     .antMatchers("/auth/**").permitAll()
+                    .antMatchers("/api/v1/auth/**").permitAll() 
                     .antMatchers("/api/v1/trilhas/**").permitAll()
                     .antMatchers("/actuator/**").permitAll()
                     .anyRequest().authenticated()
