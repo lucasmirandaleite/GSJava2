@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useNavigate } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,34 +23,43 @@ export default function Login() {
     setLoading(true);
 
     try {
+      // Chama a função login do AuthContext
       await login(formData);
+      
+      // Se chegou aqui, login foi bem-sucedido
       toast.success("Login realizado com sucesso!");
-      navigate("/dashboard");
+      
+      // Aguarda um pouco e depois redireciona
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 500);
+      
     } catch (error: any) {
-      toast.error(error.message || "Erro ao fazer login");
+      // Mostra erro específico
+      const errorMsg = error.response?.data?.message || 
+                       error.message || 
+                       "Erro ao fazer login";
+      toast.error(errorMsg);
+      console.error("Erro login:", error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
+      <div className="w-full max-w-md px-4">
         <div className="text-center mb-8">
-          <Link href="/">
-            <a className="inline-flex items-center gap-2 text-2xl font-bold text-emerald-600 hover:text-emerald-700 mb-2">
-              <Zap className="w-8 h-8" />
-              CareerMap
-            </a>
+          <Link href="/" className="inline-flex items-center gap-2 text-2xl font-bold text-emerald-600 hover:text-emerald-700">
+            <Zap className="w-8 h-8" />
+            CareerMap
           </Link>
         </div>
 
-        <Card>
-          <CardHeader>
+        <Card className="border-0 shadow-lg">
+          <CardHeader className="space-y-2">
             <CardTitle>Entrar</CardTitle>
-            <CardDescription>
-              Entre com suas credenciais para acessar sua conta
-            </CardDescription>
+            <CardDescription>Entre com suas credenciais para acessar sua conta</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -61,13 +70,11 @@ export default function Login() {
                   type="email"
                   placeholder="seu@email.com"
                   value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
+                  disabled={loading}
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="senha">Senha</Label>
                 <Input
@@ -75,24 +82,23 @@ export default function Login() {
                   type="password"
                   placeholder="••••••••"
                   value={formData.senha}
-                  onChange={(e) =>
-                    setFormData({ ...formData, senha: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
                   required
+                  disabled={loading}
                 />
               </div>
-
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button 
+                type="submit" 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={loading}
+              >
                 {loading ? "Entrando..." : "Entrar"}
               </Button>
             </form>
-
-            <div className="mt-4 text-center text-sm text-gray-600">
-              Não tem uma conta?{" "}
-              <Link href="/register">
-                <a className="text-emerald-600 hover:underline font-medium">
-                  Cadastre-se
-                </a>
+            <div className="mt-4 text-center text-sm">
+              <span className="text-gray-600">Não tem uma conta? </span>
+              <Link href="/register" className="text-emerald-600 hover:text-emerald-700 font-medium">
+                Cadastre-se
               </Link>
             </div>
           </CardContent>
