@@ -48,9 +48,17 @@ public class SecurityFilter extends OncePerRequestFilter {
             }
         } catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"Token inválido ou expirado\"}");
+            return;
+        } catch (Exception e) {
+            // Log para debug
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\": \"Erro ao processar requisição\"}");
             return;
         }
 
+        // ✅ ESSENCIAL: Sempre continua o filtro chain!
         filterChain.doFilter(request, response);
     }
 
