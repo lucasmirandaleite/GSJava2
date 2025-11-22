@@ -1,0 +1,9 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "java -jar target/gsjava2-0.0.1-SNAPSHOT.jar"
+
+[[services]]
+httpPort = 8080
+internalPort = 8080
