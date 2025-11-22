@@ -97,9 +97,11 @@ public class AuthController {
     }
 
     // ===================== POST REGISTRO VIA JSON (CORRIGIDO) =====================
-    @PostMapping("/register")
-    public ResponseEntity<Usuario> register(@RequestBody @Valid UsuarioRegistrationDTO registrationDTO) {
-        Usuario novoUsuario = usuarioService.registrarNovoUsuario(registrationDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
-    }
+   @PostMapping("/register")
+public ResponseEntity<Usuario> register(@RequestBody @Valid UsuarioRegistrationDTO registrationDTO) {
+    System.out.println("CHAMOU O ENDPOINT DE REGISTRO: " + registrationDTO.getEmail());
+    Usuario novoUsuario = usuarioService.registrarNovoUsuario(registrationDTO);
+    return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
+}
+
 }
