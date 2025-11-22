@@ -14,6 +14,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -25,11 +26,20 @@ public class SecurityConfigurations {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/v1/auth/**", "/auth/**", "/public/**", "/css/**", "/js/**").permitAll()
+                .requestMatchers(
+                    "/api/v1/auth/**", 
+                    "/auth/**", 
+                    "/public/**", 
+                    "/css/**", 
+                    "/js/**",
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form.disable()) // Desabilita form login para API REST
-            .logout(logout -> logout.disable()); // Desabilita logout padrão para API REST
+            .formLogin(form -> form.disable())
+            .logout(logout -> logout.disable());
         
         return http.build();
     }
@@ -47,9 +57,9 @@ public class SecurityConfigurations {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
