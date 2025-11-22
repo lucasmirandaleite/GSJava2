@@ -5,11 +5,13 @@ import com.fiap.careermap.model.Role;
 import com.fiap.careermap.model.Usuario;
 import com.fiap.careermap.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -28,19 +30,22 @@ public class UsuarioService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o email: " + username));
     }
 
-   public Usuario registrarNovoUsuario(UsuarioRegistrationDTO dto) {
-    if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
-        throw new IllegalArgumentException("Email já cadastrado.");
+    public Usuario registrarNovoUsuario(UsuarioRegistrationDTO dto) {
+        if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT, 
+                "Email já cadastrado."
+            );
+        }
+
+        Usuario novoUsuario = new Usuario();
+        novoUsuario.setNome(dto.getNome());
+        novoUsuario.setEmail(dto.getEmail());
+        novoUsuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+        novoUsuario.setRole(Role.USER);
+
+        return usuarioRepository.save(novoUsuario);
     }
-
-    Usuario novoUsuario = new Usuario();
-    novoUsuario.setNome(dto.getNome());
-    novoUsuario.setEmail(dto.getEmail());
-    novoUsuario.setSenha(passwordEncoder.encode(dto.getSenha()));
-    novoUsuario.setRole(Role.USER);
-
-    return usuarioRepository.save(novoUsuario);
-}
 
     public Optional<Usuario> buscarPorId(Long id) {
         return usuarioRepository.findById(id);
@@ -48,7 +53,10 @@ public class UsuarioService implements UserDetailsService {
 
     public Usuario atualizarUsuario(Long id, UsuarioRegistrationDTO dto) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, 
+                    "Usuário não encontrado."
+                ));
 
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
