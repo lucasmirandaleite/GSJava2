@@ -30,6 +30,23 @@ public class UsuarioService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o email: " + username));
     }
 
+    // === MÉTODOS QUE ESTÃO FALTANDO ===
+    
+    public Usuario findByEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o email: " + email));
+    }
+
+    public Usuario save(Usuario usuario) {
+        // Se a senha não estiver criptografada, criptografa antes de salvar
+        if (usuario.getSenha() != null && !usuario.getSenha().startsWith("$2a$")) {
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        }
+        return usuarioRepository.save(usuario);
+    }
+
+    // === SEUS MÉTODOS EXISTENTES (mantenha-os) ===
+    
     public Usuario registrarNovoUsuario(UsuarioRegistrationDTO dto) {
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new ResponseStatusException(
@@ -68,7 +85,6 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.save(usuario);
     }
 
-    // NOVOS MÉTODOS ADICIONADOS:
     public void solicitarRecuperacaoSenha(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
             .orElseThrow(() -> new ResponseStatusException(
@@ -77,7 +93,6 @@ public class UsuarioService implements UserDetailsService {
             ));
         
         // Lógica de recuperação de senha será implementada aqui
-        // Por enquanto só valida se o usuário existe
     }
 
     public void deletarUsuario(Long id) {
