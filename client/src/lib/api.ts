@@ -102,11 +102,12 @@ class ApiService {
   }
 
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await fetch(`${this.baseUrl}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(`${this.baseUrl}/usuarios/registrar`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data),
+});
+
     const authData = await this.handleResponse<AuthResponse>(response);
     this.token = authData.token;
     localStorage.setItem("auth_token", authData.token);
