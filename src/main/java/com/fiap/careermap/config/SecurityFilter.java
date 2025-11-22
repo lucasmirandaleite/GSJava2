@@ -33,11 +33,12 @@ public class SecurityFilter extends OncePerRequestFilter {
         return path.startsWith("/auth/") || path.startsWith("/actuator/") || path.startsWith("/api/v1/trilhas/");
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+@Override
+protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    // Remova toda a lógica de token JWT por enquanto
+    // Apenas continue com a cadeia de filtros
+    filterChain.doFilter(request, response);
+}
 
         System.out.println("🔒 SecurityFilter chamado para: " + request.getRequestURI());
 
