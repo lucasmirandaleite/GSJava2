@@ -67,4 +67,27 @@ public class UsuarioService implements UserDetailsService {
 
         return usuarioRepository.save(usuario);
     }
+
+    // NOVOS MÉTODOS ADICIONADOS:
+    public void solicitarRecuperacaoSenha(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, 
+                "Usuário não encontrado com este email."
+            ));
+        
+        // Lógica de recuperação de senha será implementada aqui
+        // Por enquanto só valida se o usuário existe
+    }
+
+    public void deletarUsuario(Long id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, 
+                "Usuário não encontrado."
+            );
+        }
+        
+        usuarioRepository.deleteById(id);
+    }
 }
