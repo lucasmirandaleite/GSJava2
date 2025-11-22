@@ -1,21 +1,11 @@
-FROM eclipse-temurin:11-jdk-alpine
-
+FROM maven:3.8.6-openjdk-17 AS build
 WORKDIR /app
-
-# Instalar Maven
-RUN apk add --no-cache maven
-
-# Copiar arquivos
-COPY . .
-
-# Build com Maven instalado
+COPY pom.xml .
+COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Encontrar e usar o JAR
-RUN JAR_FILE=$(find target -name "*.jar" | head -n 1) && \
-    echo "JAR found: $JAR_FILE" && \
-    cp "$JAR_FILE" app.jar
-
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=build /app/target/gsjava2-*.jar app.jar
 EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
