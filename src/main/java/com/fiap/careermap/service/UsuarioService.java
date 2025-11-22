@@ -28,19 +28,19 @@ public class UsuarioService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o email: " + username));
     }
 
-    public Usuario registrarNovoUsuario(UsuarioRegistrationDTO dto) {
-        if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email já cadastrado.");
-        }
-
-        Usuario novoUsuario = new Usuario();
-        novoUsuario.setNome(dto.getNome());
-        novoUsuario.setEmail(dto.getEmail());
-        novoUsuario.setSenha(passwordEncoder.encode(dto.getSenha()));
-        novoUsuario.setRole(Role.USER);
-
-        return usuarioRepository.save(novoUsuario);
+   public Usuario registrarNovoUsuario(UsuarioRegistrationDTO dto) {
+    if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
+        throw new IllegalArgumentException("Email já cadastrado.");
     }
+
+    Usuario novoUsuario = new Usuario();
+    novoUsuario.setNome(dto.getNome());
+    novoUsuario.setEmail(dto.getEmail());
+    novoUsuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+    novoUsuario.setRole(Role.USER);
+
+    return usuarioRepository.save(novoUsuario);
+}
 
     public Optional<Usuario> buscarPorId(Long id) {
         return usuarioRepository.findById(id);
