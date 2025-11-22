@@ -1,0 +1,14 @@
+package com.fiap.careermap.dto;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
+public class RecuperarSenhaDTO {
+    @NotBlank(message = "Email é obrigatório")
+    @Email(message = "Email deve ser válido")
+    private String email;
+    
+    // Getters e Setters
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}
