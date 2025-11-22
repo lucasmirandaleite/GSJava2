@@ -21,24 +21,29 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfigurations {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityFilter securityFilter) throws Exception {
-        return http
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeHttpRequests()
-                    .antMatchers("/auth/**").permitAll()
-                    .antMatchers("/api/v1/auth/**").permitAll() 
-                    .antMatchers("/api/v1/trilhas/**").permitAll()
-                    .antMatchers("/actuator/**").permitAll()
-                    .anyRequest().authenticated()
-                .and()
-                .cors()
-                .and()
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+   @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .csrf(csrf -> csrf.disable()) // Desabilita CSRF para APIs
+        .authorizeHttpRequests(authz -> authz
+            .requestMatchers("/auth/**", "/public/**", "/css/**", "/js/**").permitAll()
+            .anyRequest().authenticated()
+        )
+        .formLogin(form -> form
+            .loginPage("/auth/login")
+            .loginProcessingUrl("/auth/login")
+            .defaultSuccessUrl("/dashboard", true)
+            .failureUrl("/auth/login?error=true")
+            .permitAll()
+        )
+        .logout(logout -> logout
+            .logoutUrl("/auth/logout")
+            .logoutSuccessUrl("/auth/login?logout=true")
+            .permitAll()
+        );
+    
+    return http.build();
+}
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
