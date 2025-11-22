@@ -1,16 +1,11 @@
-FROM maven:3.9.0-eclipse-temurin-11
+FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-# Copiar arquivos do projeto
-COPY pom.xml .
-COPY src ./src
+# Copia o arquivo JAR (ajuste o nome conforme seu projeto)
+COPY target/*.jar app.jar
 
-# Build da aplicação
-RUN mvn clean package -DskipTests
-
-# Expor porta
+# Expose da porta (ajuste conforme sua aplicação)
 EXPOSE 8080
 
-# Comando para iniciar a aplicação
-CMD ["java", "-jar", "target/careermap-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
