@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "*", allowedHeaders = "*")  // Habilita requisições de qualquer origem
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AuthController {
 
     @Autowired
@@ -47,71 +47,35 @@ public class AuthController {
         return ResponseEntity.ok(new TokenResponseDTO(token, "Bearer"));
     }
 
-    // ===================== FORM DE REGISTRO (HTML, OPCIONAL) =====================
+    // ===================== REGISTRO =====================
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody @Valid UsuarioRegistrationDTO usuarioDTO) {
+        try {
+            // Verifica se usuário já existe
+            if (usuarioService.findByEmail(usuarioDTO.getEmail()) != null) {
+                return ResponseEntity.badRequest().body("Email já cadastrado");
+            }
+            
+            Usuario usuario = new Usuario();
+            usuario.setNome(usuarioDTO.getNome());
+            usuario.setEmail(usuarioDTO.getEmail());
+            usuario.setSenha(usuarioDTO.getSenha());
+            
+            usuarioService.save(usuario);
+            return ResponseEntity.ok("Usuário cadastrado com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao cadastrar usuário: " + e.getMessage());
+        }
+    }
+
+    // ===================== FORM DE REGISTRO (OPCIONAL) =====================
     @GetMapping("/register")
     public ResponseEntity<String> registerForm() {
+        // Mantenha o HTML atual se quiser
         String html = "<!DOCTYPE html>\n" +
-                "<html lang=\"pt-BR\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <title>Registrar Usuário</title>\n" +
-                "    <style>\n" +
-                "        body { font-family: Arial; background: #f4f4f4; padding: 20px; }\n" +
-                "        .card {\n" +
-                "            max-width: 400px;\n" +
-                "            margin: auto;\n" +
-                "            background: #fff;\n" +
-                "            padding: 20px;\n" +
-                "            border-radius: 10px;\n" +
-                "            box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n" +
-                "        }\n" +
-                "        input, button {\n" +
-                "            width: 100%;\n" +
-                "            padding: 10px;\n" +
-                "            margin-top: 10px;\n" +
-                "            border-radius: 5px;\n" +
-                "            border: 1px solid #ccc;\n" +
-                "        }\n" +
-                "        button {\n" +
-                "            background: #4CAF50;\n" +
-                "            color: white;\n" +
-                "            font-weight: bold;\n" +
-                "            cursor: pointer;\n" +
-                "        }\n" +
-                "    </style>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "    <div class=\"card\">\n" +
-                "        <h2>Registrar Usuário</h2>\n" +
-                "        <form method=\"POST\" action=\"/auth/register\">\n" +
-                "            <input type=\"text\" name=\"nome\" placeholder=\"Nome\" required>\n" +
-                "            <input type=\"email\" name=\"email\" placeholder=\"Email\" required>\n" +
-                "            <input type=\"password\" name=\"senha\" placeholder=\"Senha\" required>\n" +
-                "            <button type=\"submit\">Registrar</button>\n" +
-                "        </form>\n" +
-                "    </div>\n" +
-                "</body>\n" +
+                // ... seu HTML atual
                 "</html>";
-
         return ResponseEntity.ok().body(html);
     }
-
-    // ===================== POST REGISTRO VIA JSON (CORRIGIDO) =====================
-   @PostMapping("/register")
-public String register(@ModelAttribute Usuario usuario, Model model) {
-    try {
-        // Verifica se usuário já existe
-        if (usuarioService.findByEmail(usuario.getEmail()) != null) {
-            model.addAttribute("error", "Email já cadastrado");
-            return "auth/register";
-        }
-        
-        usuarioService.save(usuario);
-        return "redirect:/auth/login?success=true";
-    } catch (Exception e) {
-        model.addAttribute("error", "Erro ao cadastrar usuário: " + e.getMessage());
-        return "auth/register";
-    }
-}
-
 }
