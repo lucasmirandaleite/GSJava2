@@ -4,7 +4,7 @@ export const APP_TITLE = import.meta.env.VITE_APP_TITLE || "App";
 
 export const APP_LOGO = "https://placehold.co/128x128/E1E7EF/1F2937?text=App";
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1";
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "https://gsjava2-production.up.railway.app/api/v1";
 
 // Generate login URL at runtime so redirect URI reflects the current origin.
 export const getLoginUrl = () => {
