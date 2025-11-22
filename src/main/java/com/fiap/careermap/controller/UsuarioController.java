@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/usuarios")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     @Autowired
