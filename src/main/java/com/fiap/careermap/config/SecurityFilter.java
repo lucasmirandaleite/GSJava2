@@ -1,6 +1,5 @@
 package com.fiap.careermap.config;
 
-import com.fiap.careermap.service.TokenService;
 import com.fiap.careermap.service.UsuarioService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
