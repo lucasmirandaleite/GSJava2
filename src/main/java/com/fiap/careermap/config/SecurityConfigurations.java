@@ -35,7 +35,7 @@ public class SecurityConfigurations {
                 .and()
                 .cors()
                 .and()
-               // .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
