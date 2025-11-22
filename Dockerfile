@@ -1,25 +1,9 @@
-# Use imagem oficial mais simples
-FROM openjdk:17-slim
-
-# Diretório de trabalho
+FROM maven:3.8.6-openjdk-17 AS builder
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copiar arquivos do Maven
-COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
-
-# Dar permissão de execução ao mvnw
-RUN chmod +x mvnw
-
-# Copiar código fonte
-COPY src ./src
-
-# Compilar o projeto
-RUN ./mvnw clean package -DskipTests
-
-# Expor porta
+FROM openjdk:17-slim
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Comando para executar
-CMD ["java", "-jar", "target/gsjava2-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "app.jar"]
