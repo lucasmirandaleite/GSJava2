@@ -84,7 +84,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         try {
             // Se for API Key
             if (credentials.length() == 32) { // Exemplo: API Key de 32 caracteres
-                return usuarioService.loadUserByApiKey(credentials);
+             //   return usuarioService.loadUserByApiKey(credentials);
             }
             
             // Se for Basic Auth
