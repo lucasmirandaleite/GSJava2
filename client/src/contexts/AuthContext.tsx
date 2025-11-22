@@ -1,5 +1,5 @@
 // contexts/AuthContext.tsx
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 
 interface AuthContextType {
@@ -16,7 +16,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(() => {
     return localStorage.getItem("token");
   });
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any | null>(null);
 
   useEffect(() => {
     if (token) {
@@ -58,10 +58,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext); 
-}
 
   if (!context) {
     throw new Error("useAuth deve ser usado dentro de AuthProvider");
   }
+
   return context;
 }
