@@ -9,7 +9,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(
+                .allowedOriginPatterns(
                     "https://noble-grace-production-8e27.up.railway.app",
                     "http://localhost:3000",
                     "http://localhost:5173"
