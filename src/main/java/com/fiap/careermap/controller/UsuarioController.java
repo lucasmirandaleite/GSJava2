@@ -1,5 +1,6 @@
 package com.fiap.careermap.controller;
 
+import org.springframework.web.server.ResponseStatusException;
 import com.fiap.careermap.dto.UsuarioDTO;
 import com.fiap.careermap.dto.UsuarioRegistrationDTO;
 import com.fiap.careermap.dto.RecuperarSenhaDTO;
