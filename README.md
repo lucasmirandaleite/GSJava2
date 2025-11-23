@@ -12,18 +12,14 @@ Esta é a implementação da API REST em Java com Spring Boot para o projeto Car
 
 A API foi construída utilizando Spring Boot 2.7.18 (compatível com Java 11) e implementa as funcionalidades de Gestão de Usuários, Autenticação, Mapeamento de Carreira e Competências, além de simular a integração com IA (OpenAI) e aplicar boas práticas como JPA, Bean Validation, Paginação, Cache e Filas Assíncronas.
 
-📋 Índice
+📋 Índice 1.
 
-1.
-🚀 Tecnologias Utilizadas
+🚀 Tecnologias Utilizadas 2.
 
-2.
-⚙️ Como Executar o Projeto
+⚙️ Como Executar o Projeto 3.
 
-3.
-🔑 Endpoints da API
+🔑 Endpoints da API 4.
 
-4.
 💡 Boas Práticas Implementadas
 
 🚀 Tecnologias Utilizadas
