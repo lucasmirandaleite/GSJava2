@@ -22,7 +22,8 @@ public class UsuarioController {
     // ===== PÚBLICO =====
     
     @PostMapping("/registrar")
-    public ResponseEntity<UsuarioDTO> registrar(@RequestBody @Valid UsuarioRegistrationDTO dto) {
+public ResponseEntity<UsuarioDTO> registrar(@RequestBody @Valid UsuarioRegistrationDTO dto) {
+    try {
         Usuario novoUsuario = usuarioService.registrarNovoUsuario(dto);
         UsuarioDTO retorno = new UsuarioDTO(
             novoUsuario.getId(),
@@ -31,7 +32,11 @@ public class UsuarioController {
             novoUsuario.getRole()
         );
         return ResponseEntity.status(201).body(retorno);
+    } catch (ResponseStatusException e) {
+        // Retorna erro status correto e mensagem
+        return ResponseEntity.status(e.getStatus()).body(null);
     }
+}
 
     @PostMapping("/recuperar-senha")
     public ResponseEntity<String> recuperarSenha(@RequestBody @Valid RecuperarSenhaDTO dto) {
