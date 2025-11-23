@@ -10,10 +10,14 @@ const api = axios.create({
 });
 
 // Função de registro de usuário
-export async function register(data: { nome: string; email: string; senha: string }) {
-  const response = await api.post("/auth/register", data);
-  return response.data;
+export async function register(data) {
+  return fetch(`${API_BASE_URL}/usuarios/registrar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
 }
+
 
 // Função de login (opcional, caso queira usar)
 export async function login(data: { email: string; senha: string }) {
