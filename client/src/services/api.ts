@@ -1,4 +1,4 @@
-mport axios from "axios";
+import axios from "axios";
 
 // Cria uma instância do Axios apontando para sua API
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api/v1";
